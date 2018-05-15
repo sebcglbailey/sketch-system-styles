@@ -100,16 +100,30 @@ function run(context) {
 	}
 }
 
-function rename(context, textObj, name, color) {
+function changeName(name, includes, added) {
 
-	name = name.replace(" ", "")
+	var changed = false
+
+	for (var i = 0; i < includes.length; i++) {
+		if (name.includes(includes[i])) {
+			name = name.replace(includes[i], added)
+			changed = true
+		}
+	}
+
+	if (!changed) {
+		name += ` / ${added}`
+	}
+
+	return name
+}
+
+function addColor(context, name, textObj, color) {
 
 	if (color) {
-		name = name.replace("{color}", color.name)
-		name = name.replace("{colour}", color.name)
-	} else {
-		name = name.replace("/{color}", "")
-		name = name.replace("/{colour}", "")
+		name = changeName(name, ["{color}", "{colour}"], color.name)
+	} else if (name.includes("{color}") || name.includes("{colour}")) {
+		name = changeName(name, ["{color}", "{colour}"], "Default")
 	}
 
 	if (color) {
@@ -118,15 +132,23 @@ function rename(context, textObj, name, color) {
 		textObj.textColor = color
 	}
 
-	var leftName = name.replace("{align}", "01 Left")
+	createStyle(context, name, textObj.style())
+
+}
+
+function rename(context, textObj, name, color) {
+
+	name = name.replace(" ", "")
+
+	var leftName = changeName(name, ["{align}", "{alignment}"], "01 Left")
 	textObj.textAlignment = 0
-	createStyle(context, leftName, textObj.style())
-	var rightName = name.replace("{align}", "02 Right")
+	addColor(context, leftName, textObj, color)
+	var rightName = changeName(name, ["{align}", "{alignment}"], "02 Right")
 	textObj.textAlignment = 1
-	createStyle(context, rightName, textObj.style())
-	var centerName = name.replace("{align}", "03 Center")
+	addColor(context, rightName, textObj, color)
+	var centerName = changeName(name, ["{align}", "{alignment}"], "03 Center")
 	textObj.textAlignment = 2
-	createStyle(context, centerName, textObj.style())
+	addColor(context, centerName, textObj, color)
 
 }
 
