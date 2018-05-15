@@ -24,11 +24,11 @@ If no colours are selected, the styles generated will use the same colour as the
 * Create a list of shape layers with a solid fill colour to base your differing colours off for you styles.
 * Run the plugin (Shortcut: `ctrl cmd t`)
 
-![Font List][./images/fonts.png]
+![Font List][/images/fonts.png]
 
 ### Text Layer Structure
 
-![Text Layers][./images/text-layers.png]
+![Text Layers][/images/text-layers.png]
 
 You can name your text layers however you want, the plugin will use this name to name the generated styles.
 
@@ -40,7 +40,7 @@ If no `{align}` or `{color}` keyword is used, the structure of alignment and col
 
 ### Colour Layer Structure
 
-![Colour Layers][./images/colour-layers.png]
+![Colour Layers][/images/colour-layers.png]
 
 The colour layers work in much the same way. The name of the layer will be inserted into the text style name as the "colour" of that style. Any `/` will be respected and set levels to the structure of the styles.
 
