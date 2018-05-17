@@ -4,9 +4,9 @@ A Sketch plugin to automatically generate your Sketch styles for your design sys
 
 ## Installation
 
-Download and install the `sketch-style-libraries.sketchplugin` folder.
+Download and install the `sketch-style-libraries.sketchplugin` zip file [here](https://github.com/sebcglbailey/sketch-system-styles/releases/latest).
 
-Double click, and enjoy.
+Unzip, double click, and enjoy.
 
 ## Usage
 
