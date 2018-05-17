@@ -9,7 +9,8 @@
       "name": "Generate Text Styles",
       "identifier": "generate",
       "script": "generate.js",
-      "description": "Generate necessary text styles based off 1 list of styles, and selected colours.",
+      "description": "Generate your styles from selected text and shape layers.",
+      "icon": "icons/generate.png",
       "shortcut": "ctrl cmd t"
     }
   ],
@@ -19,6 +20,6 @@
       "generate"
     ]
   },
-  "version": "1.3.2",
-  "description": "Generate necessary text styles based off 1 list of styles, and selected colours."
+  "version": "1.1",
+  "description": "Generate all the text styles you'll need, including alignment and colour."
 }
