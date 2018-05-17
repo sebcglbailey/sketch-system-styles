@@ -11,10 +11,86 @@ var colors = []
 
 var noOfStyles = 0;
 
-function getDocStyles(context) {
-	sharedStyles = context.document.documentData().layerTextStyles()
+var options = {
+	leftName: "01 Left",
+	rightName: "02 Right",
+	centerName: "03 Center"
 }
 
+// Create a checkbox
+function newCheckbox(title, state) {
+  var frame = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  state = state == false ? NSOffState : NSOnState;
+
+  var rect = NSMakeRect(0, 0, 240, 24);
+  var checkbox = NSButton.alloc().initWithFrame(rect);
+
+  checkbox.setButtonType(NSSwitchButton);
+  checkbox.setBezelStyle(0);
+  checkbox.setTitle(title);
+  checkbox.setState(state);
+
+  return checkbox;
+}
+
+// Create label
+function newLabel(text) {
+  var frame = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  var rect = NSMakeRect(0, 0, 240, 20);
+
+  var label = NSTextField.alloc().initWithFrame(rect);
+
+  label.setStringValue(text);
+  label.setFont(NSFont.systemFontOfSize(14));
+  label.setBezeled(false);
+  label.setDrawsBackground(false);
+  label.setEditable(false);
+  label.setSelectable(false);
+
+  return label;
+}
+
+// Create text description field
+function newDescription(text) {
+  var frame = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  var rect = NSMakeRect(0, 0, 240, 38);
+
+  var label = NSTextField.alloc().initWithFrame(rect);
+
+  label.setStringValue(text);
+  label.setFont(NSFont.systemFontOfSize(11));
+  label.setTextColor(NSColor.colorWithCalibratedRed_green_blue_alpha(0, 0, 0, 0.5));
+  label.setBezeled(false);
+  label.setDrawsBackground(false);
+  label.setEditable(false);
+  label.setSelectable(false);
+
+  return label;
+}
+
+// Create a text input area
+function newInput(text) {
+	var frame = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+	var rect = NSMakeRect(0, 0, 240, 24)
+
+	var input = NSTextField.alloc().initWithFrame(rect)
+
+	input.setPlaceholderString(text)
+
+	return input
+}
+
+// Get the current text styles of the open document
+function getDocStyles(context) {
+	sharedStyles = context.document.documentData().layerTextStyles()
+	return sharedStyles
+}
+
+// Removes all existing styles from the current document
 function removeCurrentStyles(context) {
 	var styles = context.document.documentData().layerTextStyles()
 	let noOfStyles = styles.objects().count()
@@ -23,23 +99,66 @@ function removeCurrentStyles(context) {
 	}
 }
 
-function askStrictSync(context) {
-	var options = ['No', 'Yes']
-	var selection = UI.getSelectionFromUser(
-	  "Strictly sync all selected styles? This will remove any current styles in your document.",
-	  options
-	)
+// Handle alert response
+function handleAlert(context, response) {
 
-	var ok = selection[2]
-	var strict = selection[1]
-	if (ok && strict) {
+	if (response.left.length() > 0) {
+		options.leftName = response.left
+	}
+	if (response.right.length() > 0) {
+		options.rightName = response.right
+	}
+	if (response.center.length() > 0) {
+		options.centerName = response.center
+	}
+
+	if (response.strict) {
 		removeCurrentStyles(context)
 		run(context)
-	} else if (ok) {
+	} else {
 		run(context)
 	}
+
 }
 
+// Build the alert to show user
+function buildModal(context) {
+
+	var alert = COSAlertWindow['new']();
+
+	var deleteStylesCheck = newCheckbox("Delete all existing styles?", false)
+	alert.addAccessoryView(deleteStylesCheck)
+	var deleteStylesDesc = newDescription("Checking this box will delete all existing styles in your current document")
+	alert.addAccessoryView(deleteStylesDesc)
+
+	var alignmentLabel = newLabel("Set alignment names")
+	alert.addAccessoryView(alignmentLabel)
+	var leftInput = newInput(options.leftName)
+	alert.addAccessoryView(leftInput)
+	var rightInput = newInput(options.rightName)
+	alert.addAccessoryView(rightInput)
+	var centerInput = newInput(options.centerName)
+	alert.addAccessoryView(centerInput)
+
+	alert.addButtonWithTitle("OK")
+	alert.addButtonWithTitle("Cancel")
+
+	var response = alert.runModal()
+
+	if (response === 1000) {
+		handleAlert(context,
+			{
+				strict: deleteStylesCheck.state(),
+				left: leftInput.stringValue(),
+				right: rightInput.stringValue(),
+				center: centerInput.stringValue()
+			}
+		)
+	}
+
+}
+
+// Converts a #8 digit hex colour value to RGBA values for sketch
 function hexToRgb(hex) {
 	if (hex) {
 	    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -52,6 +171,7 @@ function hexToRgb(hex) {
 	}
 }
 
+// Function that runs upon running the 'generate' plugin
 var onRun = function(context) {
 
 	getDocStyles(context)
@@ -81,10 +201,13 @@ var onRun = function(context) {
 		)
 	}
 
-	askStrictSync(context)
+	buildModal(context)
 }
 
+// Running the function after the user has answered questions
 function run(context) {
+
+	getDocStyles(context)
 
 	for (var i = 0; i < textLayers.length; i++) {
 
@@ -100,6 +223,7 @@ function run(context) {
 	}
 }
 
+// Change the name of the style based off existing text layer name
 function changeName(name, includes, added) {
 
 	var changed = false
@@ -118,6 +242,7 @@ function changeName(name, includes, added) {
 	return name
 }
 
+// Adds the colour of the style to the text object
 function addColor(context, name, textObj, color) {
 
 	if (color) {
@@ -132,26 +257,28 @@ function addColor(context, name, textObj, color) {
 		textObj.textColor = color
 	}
 
-	createStyle(context, name, textObj.style())
+	checkStyle(context, name, textObj.style())
 
 }
 
+// Renames the textObj layer with the correct alignment value
 function rename(context, textObj, name, color) {
 
 	name = name.replace(" ", "")
 
-	var leftName = changeName(name, ["{align}", "{alignment}"], "01 Left")
+	var leftName = changeName(name, ["{align}", "{alignment}"], options.leftName)
 	textObj.textAlignment = 0
 	addColor(context, leftName, textObj, color)
-	var rightName = changeName(name, ["{align}", "{alignment}"], "02 Right")
+	var rightName = changeName(name, ["{align}", "{alignment}"], options.rightName)
 	textObj.textAlignment = 1
 	addColor(context, rightName, textObj, color)
-	var centerName = changeName(name, ["{align}", "{alignment}"], "03 Center")
+	var centerName = changeName(name, ["{align}", "{alignment}"], options.centerName)
 	textObj.textAlignment = 2
 	addColor(context, centerName, textObj, color)
 
 }
 
+// Setting the style of a text object based on its name
 function setStyle(context, textObj, name) {
 
 	getDocStyles(context)
@@ -168,18 +295,22 @@ function setStyle(context, textObj, name) {
 
 }
 
-function createStyle(context, name, newStyle) {
 
-	getDocStyles(context)
-
-	checkStyle(context, name, newStyle)
+function addStyle(name, style) {
+	if (sharedStyles.addSharedStyleWithName_firstInstance) {
+		sharedStyles.addSharedStyleWithName_firstInstance(name, style);
+	} else {
+		style = MSSharedStyle.alloc().initWithName_firstInstance(name, style)
+		sharedStyles.addSharedObject(style)
+	}
 }
 
+// Check if the style exists, and update/add new style accordingly
 function checkStyle(context, name, newStyle) {
 
 	getDocStyles(context)
 
-	var existingTextStyles = sharedStyles ? sharedStyles.objects() : null
+	var existingTextStyles = sharedStyles ? sharedStyles.objects() : getDocStyles(context).objects()
 
 	if (existingTextStyles && existingTextStyles.count() != 0) {
 
@@ -192,9 +323,9 @@ function checkStyle(context, name, newStyle) {
 				return;
 			}
 		}
-		sharedStyles.addSharedStyleWithName_firstInstance(name, newStyle);
+		addStyle(name, newStyle)
 	} else {
-		sharedStyles.addSharedStyleWithName_firstInstance(name, newStyle);
+		addStyle(name, newStyle)
 	}
 }
 
