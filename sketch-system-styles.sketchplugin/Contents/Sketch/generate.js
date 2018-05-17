@@ -125,6 +125,7 @@ function handleAlert(context, response) {
 function buildModal(context) {
 
 	var alert = COSAlertWindow['new']();
+	alert.setMessageText("Create Styles")
 
 	var deleteStylesCheck = newCheckbox("Delete all existing styles?", false)
 	alert.addAccessoryView(deleteStylesCheck)
