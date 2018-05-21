@@ -5,3 +5,7 @@ var Text = Sketch.Text
 
 var document = Sketch.getSelectedDocument()
 var selected = document.selectedLayers
+
+onRun = (context) => {
+	log("running")
+}
