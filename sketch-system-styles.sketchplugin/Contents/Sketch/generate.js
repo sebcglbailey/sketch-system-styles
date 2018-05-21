@@ -222,6 +222,7 @@ function run(context) {
 		setStyle(context, newText, name)
 
 	}
+
 }
 
 // Change the name of the style based off existing text layer name
@@ -306,6 +307,16 @@ function addStyle(name, style) {
 	}
 }
 
+function updateStyle(existing, style) {
+	if (sharedStyles.updateValueOfSharedObject_byCopyingInstance) {
+		sharedStyles.updateValueOfSharedObject_byCopyingInstance(existing, style)
+		sharedStyles.synchroniseInstancesOfSharedObject_withInstance(existing, style)
+	} else {
+		existing.updateToMatch(style)
+		existing.resetReferencingInstances()
+	}
+}
+
 // Check if the style exists, and update/add new style accordingly
 function checkStyle(context, name, newStyle) {
 
@@ -320,7 +331,7 @@ function checkStyle(context, name, newStyle) {
 			var existingStyle = existingTextStyles.objectAtIndex(i);
 
 			if (existingName == name) {
-				sharedStyles.updateValueOfSharedObject_byCopyingInstance(existingTextStyles[i], newStyle);
+				updateStyle(existingStyle, newStyle)
 				return;
 			}
 		}

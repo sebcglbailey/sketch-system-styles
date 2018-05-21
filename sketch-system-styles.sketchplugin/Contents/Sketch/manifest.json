@@ -7,17 +7,26 @@
   "commands": [
     {
       "name": "Generate Text Styles",
-      "identifier": "generate",
+      "identifier": "system.styles.generate",
       "script": "generate.js",
       "description": "Generate your styles from selected text and shape layers.",
       "icon": "icons/generate.png",
       "shortcut": "ctrl cmd t"
+    },
+    {
+      "name": "Change Text Styles",
+      "identifier": "system.styles.change",
+      "script": "change.js",
+      "description": "Change the colour or alignment of the selected styles.",
+      "icon": "icons/change.png",
+      "shortcut": "ctrl cmd shift t"
     }
   ],
   "menu": {
     "title": "🎛 System Text Styles",
     "items": [
-      "generate"
+      "system.styles.generate",
+      "system.styles.change"
     ]
   },
   "version": "1.0",
