@@ -12,21 +12,12 @@
       "description": "Generate your styles from selected text and shape layers.",
       "icon": "icons/generate.png",
       "shortcut": "ctrl cmd t"
-    },
-    {
-      "name": "Change Text Styles",
-      "identifier": "system.styles.change",
-      "script": "change.js",
-      "description": "Change the colour or alignment of the selected styles.",
-      "icon": "icons/change.png",
-      "shortcut": "ctrl cmd shift t"
     }
   ],
   "menu": {
     "title": "🎛 System Text Styles",
     "items": [
-      "system.styles.generate",
-      "system.styles.change"
+      "system.styles.generate"
     ]
   },
   "version": "1.0",
