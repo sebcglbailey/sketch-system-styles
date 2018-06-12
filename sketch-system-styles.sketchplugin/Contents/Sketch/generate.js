@@ -10,6 +10,8 @@ var textLayers = []
 var colors = []
 
 var noOfStyles = 0;
+var sharedStyles;
+var sharedStyleNames = [];
 
 var options = {
 	leftName: "01 Left",
@@ -87,6 +89,18 @@ function newInput(text) {
 // Get the current text styles of the open document
 function getDocStyles(context) {
 	sharedStyles = context.document.documentData().layerTextStyles()
+
+	if (sharedStyleNames.length == 0) {
+
+		for (var i = 0; i < sharedStyles.objects().length; i++) {
+
+			let style = sharedStyles.objects()[i]
+			sharedStyleNames.push(style.name())
+
+		}
+
+	}
+
 	return sharedStyles
 }
 
@@ -208,13 +222,12 @@ var onRun = function(context) {
 // Running the function after the user has answered questions
 function run(context) {
 
-	getDocStyles(context)
+	// getDocStyles(context)
 
 	for (var i = 0; i < textLayers.length; i++) {
 
 		var name = textLayers[i].name
 		var style = textLayers[i]._object.style()
-		var alignment;
 
 		var newText = [[MSTextLayer alloc] initWithFrame: NSMakeRect(0, 0, 250, 50)];
 		newText.style = style
@@ -222,6 +235,7 @@ function run(context) {
 		setStyle(context, newText, name)
 
 	}
+
 }
 
 // Change the name of the style based off existing text layer name
@@ -244,7 +258,7 @@ function changeName(name, includes, added) {
 }
 
 // Adds the colour of the style to the text object
-function addColor(context, name, textObj, color) {
+function addColor(context, name, newText, color) {
 
 	if (color) {
 		name = changeName(name, ["{color}", "{colour}"], color.name)
@@ -255,41 +269,39 @@ function addColor(context, name, textObj, color) {
 	if (color) {
 		color = color.color
 		color = MSColor.colorWithRed_green_blue_alpha(color.r, color.g, color.b, color.a)
-		textObj.textColor = color
+		newText.textColor = color
 	}
 
-	checkStyle(context, name, textObj.style())
+	checkStyle(context, name, newText.style())
 
 }
 
 // Renames the textObj layer with the correct alignment value
-function rename(context, textObj, name, color) {
+function rename(context, newText, name, color) {
 
 	name = name.replace(" ", "")
 
 	var leftName = changeName(name, ["{align}", "{alignment}"], options.leftName)
-	textObj.textAlignment = 0
-	addColor(context, leftName, textObj, color)
+	newText.textAlignment = 0
+	addColor(context, leftName, newText, color)
 	var rightName = changeName(name, ["{align}", "{alignment}"], options.rightName)
-	textObj.textAlignment = 1
-	addColor(context, rightName, textObj, color)
+	newText.textAlignment = 1
+	addColor(context, rightName, newText, color)
 	var centerName = changeName(name, ["{align}", "{alignment}"], options.centerName)
-	textObj.textAlignment = 2
-	addColor(context, centerName, textObj, color)
+	newText.textAlignment = 2
+	addColor(context, centerName, newText, color)
 
 }
 
 // Setting the style of a text object based on its name
-function setStyle(context, textObj, name) {
-
-	getDocStyles(context)
+function setStyle(context, newText, name) {
 
 	if (colors.length == 0) {
-		rename(context, textObj, name)
+		rename(context, newText, name)
 	} else if (colors.length > 0) {
 
 		for (var i = 0; i < colors.length; i++) {
-			rename(context, textObj, name, colors[i])
+			rename(context, newText, name, colors[i])
 		}
 
 	}
@@ -306,25 +318,37 @@ function addStyle(name, style) {
 	}
 }
 
+function updateStyle(existing, style) {
+	if (sharedStyles.updateValueOfSharedObject_byCopyingInstance) {
+		sharedStyles.updateValueOfSharedObject_byCopyingInstance(existing, style)
+		sharedStyles.synchroniseInstancesOfSharedObject_withInstance(existing, style)
+	} else {
+		existing.updateToMatch(style)
+		existing.resetReferencingInstances()
+	}
+}
+
 // Check if the style exists, and update/add new style accordingly
 function checkStyle(context, name, newStyle) {
 
-	getDocStyles(context)
+	// getDocStyles(context)
 
-	var existingTextStyles = sharedStyles ? sharedStyles.objects() : getDocStyles(context).objects()
+	if (sharedStyles && sharedStyles.objects().length != 0) {
 
-	if (existingTextStyles && existingTextStyles.count() != 0) {
+		var existing = false
 
-		for (var i = 0; i < existingTextStyles.count(); i++) {
-			var existingName = existingTextStyles[i].name()
-			var existingStyle = existingTextStyles.objectAtIndex(i);
-
-			if (existingName == name) {
-				sharedStyles.updateValueOfSharedObject_byCopyingInstance(existingTextStyles[i], newStyle);
-				return;
+		sharedStyleNames.forEach((styleName, index) => {
+			if (styleName == name) {
+				var existingStyle = sharedStyles.objects().objectAtIndex(index)
+				updateStyle(existingStyle, newStyle)
+				existing = true
+				return
 			}
+		})
+
+		if (!existing) {
+			addStyle(name, newStyle)
 		}
-		addStyle(name, newStyle)
 	} else {
 		addStyle(name, newStyle)
 	}

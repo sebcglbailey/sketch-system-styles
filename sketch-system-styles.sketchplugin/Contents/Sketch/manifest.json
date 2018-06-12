@@ -7,7 +7,7 @@
   "commands": [
     {
       "name": "Generate Text Styles",
-      "identifier": "generate",
+      "identifier": "system.styles.generate",
       "script": "generate.js",
       "description": "Generate your styles from selected text and shape layers.",
       "icon": "icons/generate.png",
@@ -17,9 +17,9 @@
   "menu": {
     "title": "🎛 System Text Styles",
     "items": [
-      "generate"
+      "system.styles.generate"
     ]
   },
-  "version": "1.0",
+  "version": "1.1",
   "description": "Generate all the text styles you'll need, including alignment and colour."
 }
