@@ -1,7 +1,7 @@
 {
   "name": "system-styles",
   "description": "Generate all the text styles you'll need, including alignment and colour.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "engines": {
     "sketch": ">=3.0"
   },
