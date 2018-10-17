@@ -1,93 +1,47 @@
-# system-styles
+# Sketch System Styles
 
-_This plugin was created using `skpm`. For a detailed explanation on how things work, checkout the [skpm Readme](https://github.com/skpm/skpm/blob/master/README.md)._
+A Sketch plugin to automatically generate your Sketch styles for your design system, without the need to define multiple styles with alignment, and colour.
+
+## Installation
+
+Download and install the `sketch-style-libraries.sketchplugin` zip file [here](https://github.com/sebcglbailey/sketch-system-styles/releases/latest).
+
+Unzip, double click, and enjoy.
 
 ## Usage
 
-Install the dependencies
+### Description
 
-```bash
-npm install
-```
+The plugin works by a selection of template text layers, and shapes with a colour fill.
 
-Once the installation is done, you can run some commands inside the project folder:
+The styles are copied from the template text layers, copying all of their styles, and generating new styles for different alignment and colours.
 
-```bash
-npm run build
-```
+If no colours are selected, the styles generated will use the same colour as the selected text layers.
 
-To watch for changes:
+### Running the plugin
 
-```bash
-npm run watch
-```
+* Create a list of text layers that you wish to base your styles off.
+* Create a list of shape layers with a solid fill colour to base your differing colours off for you styles.
+* Run the plugin (Shortcut: `ctrl cmd t`)
 
-Additionally, if you wish to run the plugin every time it is built:
+![Font List](/images/fonts.png)
 
-```bash
-npm run start
-```
+### Text Layer Structure
 
-## Custom Configuration
+![Text Layers](/images/text-layers.png)
 
-### Babel
+You can name your text layers however you want, the plugin will use this name to name the generated styles.
 
-To customize Babel, you have two options:
+Any `/` will create a new level to the structure of the styles.
 
-* You may create a [`.babelrc`](https://babeljs.io/docs/usage/babelrc) file in your project's root directory. Any settings you define here will overwrite matching config-keys within skpm preset. For example, if you pass a "presets" object, it will replace & reset all Babel presets that skpm defaults to.
+Using the keywords `{align}` and `{color}` is a way of overriding the default structure of where the alignment and colour levels are palced within the style name.
 
-* If you'd like to modify or add to the existing Babel config, you must use a `webpack.skpm.config.js` file. Visit the [Webpack](#webpack) section for more info.
+If no `{align}` or `{color}` keyword is used, the structure of alignment and colour will be appended to the name of the layer. So a text layer with the name `Jumbo / 01` will become `Jumbo / 01 / 01 Left / Default`.
 
-### Webpack
+### Colour Layer Structure
 
-To customize webpack create `webpack.skpm.config.js` file which exports function that will change webpack's config.
+![Colour Layers](/images/colour-layers.png)
 
-```js
-/**
- * Function that mutates original webpack config.
- * Supports asynchronous changes when promise is returned.
- *
- * @param {object} config - original webpack config.
- * @param {boolean} isPluginCommand - whether the config is for a plugin command or a resource
- **/
-module.exports = function(config, isPluginCommand) {
-  /** you can change config here **/
-}
-```
+The colour layers work in much the same way. The name of the layer will be inserted into the text style name as the "colour" of that style. Any `/` will be respected and set levels to the structure of the styles.
 
-## Debugging
-
-To view the output of your `console.log`, you have a few different options:
-
-* Use the [`sketch-dev-tools`](https://github.com/skpm/sketch-dev-tools)
-* Open `Console.app` and look for the sketch logs
-* Look at the `~/Library/Logs/com.bohemiancoding.sketch3/Plugin Output.log` file
-
-Skpm provides a convenient way to do the latter:
-
-```bash
-skpm log
-```
-
-The `-f` option causes `skpm log` to not stop when the end of logs is reached, but rather to wait for additional data to be appended to the input
-
-## Publishing your plugin
-
-```bash
-skpm publish <bump>
-```
-
-(where `bump` can be `patch`, `minor` or `major`)
-
-`skpm publish` will create a new release on your GitHub repository and create an appcast file in order for Sketch users to be notified of the update.
-
-You will need to specify a `repository` in the `package.json`:
-
-```diff
-...
-+ "repository" : {
-+   "type": "git",
-+   "url": "git+https://github.com/ORG/NAME.git"
-+  }
-...
-```
+Make sure the shapes that you use have one solid fill colour, and this will generate the necessary styles.
