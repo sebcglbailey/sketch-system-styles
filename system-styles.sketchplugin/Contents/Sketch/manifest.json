@@ -1,0 +1,26 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "commands": [
+    {
+      "name": "Generate",
+      "identifier": "generate.system.styles",
+      "script": "generate.js",
+      "shortcut": "ctrl cmd shift t"
+    }
+  ],
+  "menu": {
+    "title": "System Styles",
+    "items": [
+      "generate.system.styles"
+    ]
+  },
+  "version": "0.1.0",
+  "name": "system-styles",
+  "identifier": "system-styles",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
+  "author": "Seb Bailey",
+  "authorEmail": "sebastian@clearscore.com"
+}
