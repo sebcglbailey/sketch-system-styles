@@ -1,26 +1,28 @@
 {
   "compatibleVersion": 3,
   "bundleVersion": 1,
+  "author": "Sebastian Bailey",
   "icon": "icon.png",
+  "identifier": "com.sketch.system.text.styles",
+  "description": "Generate all the text styles you'll need, including alignment and colour.",
   "commands": [
     {
-      "name": "Generate",
-      "identifier": "generate.system.styles",
+      "name": "Generate Text Styles",
+      "identifier": "system.styles.generate",
       "script": "generate.js",
-      "shortcut": "ctrl cmd shift t"
+      "description": "Generate your styles from selected text and shape layers.",
+      "icon": "icons/generate.png",
+      "shortcut": "ctrl cmd t"
     }
   ],
   "menu": {
-    "title": "System Styles",
+    "title": "🎛 System Text Styles",
     "items": [
-      "generate.system.styles"
+      "system.styles.generate"
     ]
   },
-  "version": "0.1.0",
+  "version": "2.0",
   "name": "system-styles",
-  "identifier": "system-styles",
   "disableCocoaScriptPreprocessor": true,
-  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
-  "author": "Seb Bailey",
-  "authorEmail": "sebastian@clearscore.com"
+  "appcast": "https://raw.githubusercontent.com/sebcglbailey/sketch-system-styles/master/.appcast.xml"
 }
