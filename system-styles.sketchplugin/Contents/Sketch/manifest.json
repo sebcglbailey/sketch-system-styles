@@ -22,6 +22,10 @@
     ]
   },
   "version": "2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebcglbailey/sketch-system-styles.git"
+  },
   "name": "system-styles",
   "disableCocoaScriptPreprocessor": true,
   "appcast": "https://raw.githubusercontent.com/sebcglbailey/sketch-system-styles/master/.appcast.xml"
